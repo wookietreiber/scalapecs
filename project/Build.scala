@@ -26,7 +26,7 @@ object PecsBuild extends Build {
         dispatchJson,
         dispatchHttpJson
       ),
-      initialCommands in Compile in console := """import pecs._"""
+      initialCommands in Compile in console := """import scalax.pecs._"""
     )
   )
 }
