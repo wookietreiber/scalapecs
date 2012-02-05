@@ -45,7 +45,8 @@ import dispatch._
 
 import scala.xml._
 
-case class XmlPecsResource(website: String) extends PecsResource[NodeSeq] {
+case class XmlPecsResource(website: String)
+  extends PecsResource[NodeSeq,XmlPecsResource] {
 
   def infoRequest = url(website + "/api_information_xml")
 

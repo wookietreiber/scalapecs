@@ -43,7 +43,12 @@ package scalax.pecs
 
 import dispatch._
 
-abstract class PecsResource[A] {
+/**
+  *
+  * @tparam A  data type of the resource
+  * @tparam PR type of the resource
+  */
+abstract class PecsResource[A,PR <: PecsResource[A,PR]] {
 
   /** Returns the URL of the website. */
   def website: String

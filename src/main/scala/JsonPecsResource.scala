@@ -45,7 +45,8 @@ import dispatch._
 import dispatch.json._
 import dispatch.json.JsHttp._
 
-case class JsonPecsResource(website: String) extends PecsResource[JsValue] {
+case class JsonPecsResource(website: String)
+  extends PecsResource[JsValue,JsonPecsResource] {
 
   def infoRequest = url(website + "/api_information_json")
 
