@@ -41,7 +41,23 @@
 
 package scalax.pecs
 
-sealed abstract class PecsFormat
+import dispatch._
 
-case object JSON extends PecsFormat
-case object XML  extends PecsFormat
+abstract class PecsResource[A] {
+
+  /** Returns the URL of the website. */
+  def website: String
+
+  /** Returns the children of this resource as name path pairs. */
+  def children: Map[String,String]
+
+  /** Returns the provided views. */
+  def views: List[String]
+
+  /** Optionally returns a resource from given path. */
+  def fromPath(path: String): Option[A]
+
+  /** Optionally returns a resource from given uuid. */
+  def fromUuid(uuid: String): Option[A]
+
+}
