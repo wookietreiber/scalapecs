@@ -50,19 +50,46 @@ import dispatch._
   */
 abstract class PecsResource[A,PR <: PecsResource[A,PR]] {
 
-  /** Returns the URL of the website. */
+  /** Returns the name of the resource. */
+  def name: String
+
+  /** Returns the URL of the resource. */
   def website: String
 
+  /** Returns the host of the resource. */
+  def host: String = url(website).host.toURI
+
+  /** Returns the path of the resource. */
+  def path: String = url(website).path
+
   /** Returns the children of this resource as name path pairs. */
-  def children: Map[String,String]
+  def children: List[PR]
 
   /** Returns the provided views. */
   def views: List[String]
 
   /** Optionally returns a resource from given path. */
-  def fromPath(path: String): Option[A]
+  def fromPath(path: String): Option[PR] =
+    children find { _.path == path }
 
   /** Optionally returns a resource from given uuid. */
-  def fromUuid(uuid: String): Option[A]
+  def fromUuid(uuid: String): Option[PR] =
+    children find { _.name == uuid }
+
+  // -----------------------------------------------------------------------
+  // internals
+  // -----------------------------------------------------------------------
+
+  /** Returns the request for information about the resource. */
+  protected def infoRequest: Request
+
+  /** Returns the request for fetching the resource. */
+  protected def resourceRequest: Request
+
+  /** Returns resource information. */
+  protected def info: A
+
+  /** Returns the actual resource. */
+  protected def resource: A
 
 }

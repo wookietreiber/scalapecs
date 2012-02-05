@@ -45,47 +45,45 @@ import dispatch._
 import dispatch.json._
 import dispatch.json.JsHttp._
 
-case class JsonPecsResource(website: String)
+case class JsonPecsResource(website: String, name: String = "")
   extends PecsResource[JsValue,JsonPecsResource] {
 
-  def infoRequest = url(website + "/api_information_json")
+  override protected def infoRequest = url(website + "/api_information_json")
 
-  def info = {
+  override protected def info = {
     val http = new Http with NoLogging
-
-    val info = http(infoRequest ># { _ match {
-      case JsObject(m) => m
-      case _           => Map[JsString,JsValue]()
-    }})
-
+    val info = http(infoRequest ># identity)
     http.shutdown()
-
     info
   }
 
-  override def views: List[String] = info get JsString("api_views") collect {
-    case JsArray(a) => a collect { case JsString(s) => s }
-  } getOrElse Nil
+  override def views = info match {
+    case JsObject(info) =>
+      info get JsString("api_views") collect {
+        case JsArray(a) => a collect { case JsString(s) => s }
+      } getOrElse Nil
 
-  def resourcesRequest = url(website + "/to_json")
-
-  def children: Map[String,String] = {
-    val http = new Http with NoLogging
-
-    val res = http(resourcesRequest ># { _ match {
-      case JsObject(m) => m
-      case _           => Map[JsString,JsValue]()
-    }})
-
-    http.shutdown()
-
-    res.get(JsString("children")) collect {
-      case JsObject(m) => m collect { case (JsString(name),JsString(path)) => (name, path) }
-    } getOrElse Map()
+    case _ => Nil
   }
 
-  def fromPath(path: String) = null
+  override protected def resourceRequest = url(website + "/to_json")
 
-  def fromUuid(uuid: String) = null
+  override protected def resource = {
+    val http = new Http with NoLogging
+    val res  = http(resourceRequest ># identity)
+    http.shutdown()
+    res
+  }
+
+  override def children = resource match {
+    case JsObject(m) => m
+      m.get(JsString("children")) collect {
+        case JsObject(m) => m collect {
+          case (JsString(name),JsString(path)) => JsonPecsResource(host + path, name)
+        } toList
+      } getOrElse Nil
+
+    case _ => Nil
+  }
 
 }

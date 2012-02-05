@@ -45,31 +45,31 @@ import dispatch._
 
 import scala.xml._
 
-case class XmlPecsResource(website: String)
+case class XmlPecsResource(website: String, name: String = "")
   extends PecsResource[NodeSeq,XmlPecsResource] {
 
-  def infoRequest = url(website + "/api_information_xml")
+  override protected def infoRequest = url(website + "/api_information_xml")
 
-  def info = {
+  override protected def info = {
     val http = new Http with NoLogging
     val info = http(infoRequest <> identity)
     http.shutdown()
     info
   }
 
-  def views: List[String] = info \ "api_views" \ "api_view" map { _ text } toList
+  override def views = info \ "api_views" \ "api_view" map { _ text } toList
 
-  def resourcesRequest = url(website + "/to_xml")
+  override protected def resourceRequest = url(website + "/to_xml")
 
-  def children: Map[String,String] = {
+  override protected def resource = {
     val http = new Http with NoLogging
-    val res = http(resourcesRequest <> identity)
+    val res  = http(resourceRequest <> identity)
     http.shutdown()
-    res \\ "child" map { c => (c \ "title" text, c \ "url" text) } toMap
+    res
   }
 
-  def fromPath(path: String) = null
-
-  def fromUuid(uuid: String) = null
+  override def children = resource \\ "child" map { child =>
+    XmlPecsResource(host + (child \ "url" text), child \ "title" text)
+  } toList
 
 }
