@@ -43,7 +43,7 @@ package scalax.pecs
 
 import dispatch._
 
-/**
+/** Pecs resource abstract in the data type to share information.
   *
   * @tparam A  data type of the resource
   * @tparam PR type of the resource
