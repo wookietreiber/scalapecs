@@ -45,8 +45,13 @@ import dispatch._
 import dispatch.json._
 import dispatch.json.JsHttp._
 
+/** Pecs resource using JSON as the data structure to retrieve information. */
 case class JsonPecsResource(website: String, name: String = "")
   extends PecsResource[JsValue,JsonPecsResource] {
+
+  // -----------------------------------------------------------------------
+  // info request
+  // -----------------------------------------------------------------------
 
   override protected def infoRequest = url(website + "/api_information_json")
 
@@ -65,6 +70,10 @@ case class JsonPecsResource(website: String, name: String = "")
 
     case _ => Nil
   }
+
+  // -----------------------------------------------------------------------
+  // info
+  // -----------------------------------------------------------------------
 
   override protected def resourceRequest = url(website + "/to_json")
 

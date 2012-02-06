@@ -45,8 +45,13 @@ import dispatch._
 
 import scala.xml._
 
+/** Pecs resource using XML as the data structure to retrieve information. */
 case class XmlPecsResource(website: String, name: String = "")
   extends PecsResource[NodeSeq,XmlPecsResource] {
+
+  // -----------------------------------------------------------------------
+  // info request
+  // -----------------------------------------------------------------------
 
   override protected def infoRequest = url(website + "/api_information_xml")
 
@@ -58,6 +63,10 @@ case class XmlPecsResource(website: String, name: String = "")
   }
 
   override def views = info \ "api_views" \ "api_view" map { _ text } toList
+
+  // -----------------------------------------------------------------------
+  // resource request
+  // -----------------------------------------------------------------------
 
   override protected def resourceRequest = url(website + "/to_xml")
 
