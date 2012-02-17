@@ -55,7 +55,7 @@ case class JsonPecsResource(website: String, name: String = "")
 
   override protected def infoRequest = url(website + "/api_information_json")
 
-  override protected def info = {
+  override def info = {
     val http = new Http with NoLogging
     val info = http(infoRequest ># identity)
     http.shutdown()
@@ -77,7 +77,7 @@ case class JsonPecsResource(website: String, name: String = "")
 
   override protected def resourceRequest = url(website + "/to_json")
 
-  override protected def resource = {
+  override def resource = {
     val http = new Http with NoLogging
     val res  = http(resourceRequest ># identity)
     http.shutdown()

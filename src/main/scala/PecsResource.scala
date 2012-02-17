@@ -87,9 +87,9 @@ abstract class PecsResource[A,PR <: PecsResource[A,PR]] {
   protected def resourceRequest: Request
 
   /** Returns resource information. */
-  protected def info: A
+  def info: A
 
   /** Returns the actual resource. */
-  protected def resource: A
+  def resource: A
 
 }

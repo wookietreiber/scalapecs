@@ -55,7 +55,7 @@ case class XmlPecsResource(website: String, name: String = "")
 
   override protected def infoRequest = url(website + "/api_information_xml")
 
-  override protected def info = {
+  override def info = {
     val http = new Http with NoLogging
     val info = http(infoRequest <> identity)
     http.shutdown()
@@ -70,7 +70,7 @@ case class XmlPecsResource(website: String, name: String = "")
 
   override protected def resourceRequest = url(website + "/to_xml")
 
-  override protected def resource = {
+  override def resource = {
     val http = new Http with NoLogging
     val res  = http(resourceRequest <> identity)
     http.shutdown()
