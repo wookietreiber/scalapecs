@@ -50,6 +50,8 @@ import dispatch._
   */
 abstract class PecsResource[A,PR <: PecsResource[A,PR]] {
 
+  self: PR =>
+
   /** Returns the name of the resource. */
   def name: String
 
@@ -84,6 +86,16 @@ abstract class PecsResource[A,PR <: PecsResource[A,PR]] {
   def ls = children map {
     _.path.replaceFirst(path,"").replaceFirst("/","")
   } foreach println
+
+  /** Mimics bash cd. */
+  def cd(path: String): PR = try {
+    path.split("/").foldLeft(self) { (pr,path) =>
+      pr.fromPath(pr.path + "/" + path).get
+    }
+  } catch { case e =>
+    Console.err.printf("Cannot change dir to %s (%s).\n", path, e)
+    self
+  }
 
   // -----------------------------------------------------------------------
   // internals
