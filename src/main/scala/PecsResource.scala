@@ -77,6 +77,15 @@ abstract class PecsResource[A,PR <: PecsResource[A,PR]] {
     children find { _.name == uuid }
 
   // -----------------------------------------------------------------------
+  // console
+  // -----------------------------------------------------------------------
+
+  /** Mimics coreutils ls. */
+  def ls = children map {
+    _.path.replaceFirst(path,"").replaceFirst("/","")
+  } foreach println
+
+  // -----------------------------------------------------------------------
   // internals
   // -----------------------------------------------------------------------
 
