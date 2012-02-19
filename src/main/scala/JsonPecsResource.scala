@@ -47,7 +47,7 @@ import dispatch.json.JsHttp._
 
 /** Pecs resource using JSON as the data structure to retrieve information. */
 case class JsonPecsResource(website: String, name: String = "")
-  extends PecsResource[JsValue,JsonPecsResource] {
+  extends PecsResource[JsObject,JsonPecsResource] {
 
   // -----------------------------------------------------------------------
   // info request
@@ -59,17 +59,12 @@ case class JsonPecsResource(website: String, name: String = "")
     val http = new Http with NoLogging
     val info = http(infoRequest ># identity)
     http.shutdown()
-    info
+    info.asInstanceOf[JsObject]
   }
 
-  override def views = info match {
-    case JsObject(info) =>
-      info get JsString("api_views") collect {
-        case JsArray(a) => a collect { case JsString(s) => s }
-      } getOrElse Nil
-
-    case _ => Nil
-  }
+  override def views = info.self get JsString("api_views") collect {
+    case JsArray(a) => a collect { case JsString(s) => s }
+  } getOrElse Nil
 
   // -----------------------------------------------------------------------
   // info
@@ -81,18 +76,13 @@ case class JsonPecsResource(website: String, name: String = "")
     val http = new Http with NoLogging
     val res  = http(resourceRequest ># identity)
     http.shutdown()
-    res
+    res.asInstanceOf[JsObject]
   }
 
-  override def children = resource match {
-    case JsObject(m) => m
-      m.get(JsString("children")) collect {
-        case JsObject(m) => m collect {
-          case (JsString(name),JsString(path)) => JsonPecsResource(host + path, name)
-        } toList
-      } getOrElse Nil
-
-    case _ => Nil
-  }
+  override def children = resource.self get JsString("children") collect {
+    case JsObject(m) => m collect {
+      case (JsString(name),JsString(path)) => JsonPecsResource(host + path, name)
+    } toList
+  } getOrElse Nil
 
 }
