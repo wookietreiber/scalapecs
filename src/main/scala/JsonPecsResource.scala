@@ -67,7 +67,7 @@ case class JsonPecsResource(website: String, name: String = "")
   } getOrElse Nil
 
   // -----------------------------------------------------------------------
-  // info
+  // resource request
   // -----------------------------------------------------------------------
 
   override protected def resourceRequest = url(website + "/to_json")
@@ -77,6 +77,10 @@ case class JsonPecsResource(website: String, name: String = "")
     val res  = http(resourceRequest ># identity)
     http.shutdown()
     res.asInstanceOf[JsObject]
+  }
+
+  override def resourceType = resource.self get JsString("type") collect {
+    case JsString(t) => t
   }
 
   override def children = resource.self get JsString("children") collect {

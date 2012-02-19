@@ -77,6 +77,11 @@ case class XmlPecsResource(website: String, name: String = "")
     res
   }
 
+  override def resourceType = resource \\ "type" text match {
+    case "" => None
+    case t  => Some(t)
+  }
+
   override def children = resource \\ "child" map { child =>
     XmlPecsResource(host + (child \ "url" text), child \ "title" text)
   } toList

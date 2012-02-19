@@ -78,6 +78,9 @@ abstract class PecsResource[A,PR <: PecsResource[A,PR]] {
   def fromUuid(uuid: String): Option[PR] =
     children find { _.name == uuid }
 
+  /** Returns the type of this resource. */
+  def resourceType: Option[String]
+
   // -----------------------------------------------------------------------
   // console
   // -----------------------------------------------------------------------
