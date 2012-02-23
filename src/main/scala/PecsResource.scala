@@ -119,4 +119,7 @@ abstract class PecsResource[A,PR <: PecsResource[A,PR]] {
   /** Returns the actual resource. */
   def resource: A
 
+  /** Returns the data relevant values. */
+  protected def dataValues: A
+
 }

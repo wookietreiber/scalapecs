@@ -83,6 +83,9 @@ case class JsonPecsResource(website: String, name: String = "")
     case JsString(t) => t
   }
 
+  override protected def dataValues =
+    resource.self(JsString("values")).asInstanceOf[JsObject]
+
   override def data = None
 
   override def children = resource.self get JsString("children") collect {

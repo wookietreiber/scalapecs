@@ -82,50 +82,53 @@ case class XmlPecsResource(website: String, name: String = "")
     case t  => Some(t)
   }
 
+  override protected def dataValues = resource \ "values"
+
   override def data = resourceType collect {
     case Data.folder => Folder (
-      resource \ "values" \ "title" text,
-      resource \ "values" \ "id" text,
-      resource \ "values" \ "description" text,
-      resource \ "values" \ "subject" \ "value" map { _.text } toList,
-      resource \ "values" \ "language" text,
-      forPattern("YYYY-MM-DD'T'HH:mm:ssZ").parseDateTime((resource \ "values" \
-      "creation_date" text).replaceAll("%3A",":").replaceAll("%2B","+")),
-      forPattern("YYYY-MM-DD'T'HH:mm:ssZ").parseDateTime((resource \ "values" \
+      dataValues \ "title" text,
+      dataValues \ "id" text,
+      dataValues \ "description" text,
+      dataValues \ "subject" \ "value" map { _.text } toList,
+      dataValues \ "language" text,
+      forPattern("YYYY-MM-DD'T'HH:mm:ssZ").parseDateTime {
+        (dataValues \ "creation_date" text).replaceAll("%3A",":").replaceAll("%2B","+")
+      },
+      forPattern("YYYY-MM-DD'T'HH:mm:ssZ").parseDateTime((dataValues \
       "modification_date" text).replaceAll("%3A",":").replaceAll("%2B","+")),
-      resource \ "values" \ "creators" \ "value" map { _.text } toList,
-      resource \ "values" \ "contributors" \ "value" map { _.text } toList,
-      (resource \ "values" \ "allowDiscussion" text) match {
+      dataValues \ "creators" \ "value" map { _.text } toList,
+      dataValues \ "contributors" \ "value" map { _.text } toList,
+      (dataValues \ "allowDiscussion" text) match {
         case "" => false
         case s  => s.toBoolean
       }
     )
 
     case Data.document => Document (
-      resource \ "values" \ "title" text,
-      resource \ "values" \ "id" text,
-      resource \ "values" \ "description" text,
-      resource \ "values" \ "subject" \ "value" map { _.text } toList,
-      resource \ "values" \ "language" text,
-      forPattern("YYYY-MM-DD'T'HH:mm:ssZ").parseDateTime((resource \ "values" \
+      dataValues \ "title" text,
+      dataValues \ "id" text,
+      dataValues \ "description" text,
+      dataValues \ "subject" \ "value" map { _.text } toList,
+      dataValues \ "language" text,
+      forPattern("YYYY-MM-DD'T'HH:mm:ssZ").parseDateTime((dataValues \
       "creation_date" text).replaceAll("%3A",":").replaceAll("%2B","+")),
-      forPattern("YYYY-MM-DD'T'HH:mm:ssZ").parseDateTime((resource \ "values" \
+      forPattern("YYYY-MM-DD'T'HH:mm:ssZ").parseDateTime((dataValues \
       "modification_date" text).replaceAll("%3A",":").replaceAll("%2B","+")),
-      resource \ "values" \ "creators" \ "value" map { _.text } toList,
-      resource \ "values" \ "contributors" \ "value" map { _.text } toList,
-      (resource \ "values" \ "allowDiscussion" text) match {
+      dataValues \ "creators" \ "value" map { _.text } toList,
+      dataValues \ "contributors" \ "value" map { _.text } toList,
+      (dataValues \ "allowDiscussion" text) match {
         case "" => false
         case s  => s.toBoolean
       },
-      (resource \ "values" \ "tableContents" text) match {
+      (dataValues \ "tableContents" text) match {
         case "" => false
         case s  => s.toBoolean
       },
-      (resource \ "values" \ "presentation" text) match {
+      (dataValues \ "presentation" text) match {
         case "" => false
         case s  => s.toBoolean
       },
-      resource \ "values" \ "text" text
+      dataValues \ "text" text
     )
   }
 
