@@ -50,6 +50,23 @@ case class XmlPecsResource(website: String, name: String = "")
   extends PecsResource[NodeSeq,XmlPecsResource] {
 
   // -----------------------------------------------------------------------
+  // implicits
+  // -----------------------------------------------------------------------
+
+  private implicit def xml2string(xml: NodeSeq) = xml text
+
+  private implicit def xml2boolean(xml: NodeSeq) = xml text match {
+    case "" => false
+    case s  => s.toBoolean
+  }
+
+  private implicit def xml2datetime(xml: NodeSeq) = pecsDate {
+    xml.text.replaceAll("%3A",":").replaceAll("%2B","+")
+  }
+
+  private implicit def xml2stringlist(xml: NodeSeq) = xml map { _ text } toList
+
+  // -----------------------------------------------------------------------
   // info request
   // -----------------------------------------------------------------------
 
@@ -84,42 +101,34 @@ case class XmlPecsResource(website: String, name: String = "")
 
   override protected def dataValues = resource \ "values"
 
-  private def convertDateString(s: String) =
-    s.replaceAll("%3A",":").replaceAll("%2B","+")
-
-  private def booleanOrFalse(s: String) = s match {
-    case "" => false
-    case s  => s.toBoolean
-  }
-
   override def data = resourceType collect {
     case Data.folder => val values = dataValues ; Folder (
-      values \ "title" text,
-      values \ "id" text,
-      values \ "description" text,
-      values \ "subject" \ "value" map { _.text } toList,
-      values \ "language" text,
-      pecsDate(convertDateString(values \ "creation_date" text)),
-      pecsDate(convertDateString(values \ "modification_date" text)),
-      values \ "creators" \ "value" map { _.text } toList,
-      values \ "contributors" \ "value" map { _.text } toList,
-      booleanOrFalse(values \ "allowDiscussion" text)
+      values \ "title",
+      values \ "id",
+      values \ "description",
+      values \ "subject" \ "value",
+      values \ "language",
+      values \ "creation_date",
+      values \ "modification_date",
+      values \ "creators" \ "value",
+      values \ "contributors" \ "value",
+      values \ "allowDiscussion"
     )
 
     case Data.document => val values = dataValues ; Document (
-      values \ "title" text,
-      values \ "id" text,
-      values \ "description" text,
-      values \ "subject" \ "value" map { _.text } toList,
-      values \ "language" text,
-      pecsDate(convertDateString(values \ "creation_date" text)),
-      pecsDate(convertDateString(values \ "modification_date" text)),
-      values \ "creators" \ "value" map { _.text } toList,
-      values \ "contributors" \ "value" map { _.text } toList,
-      booleanOrFalse(values \ "allowDiscussion" text),
-      booleanOrFalse(values \ "tableContents" text),
-      booleanOrFalse(values \ "presentation" text),
-      values \ "text" text
+      values \ "title",
+      values \ "id",
+      values \ "description",
+      values \ "subject" \ "value",
+      values \ "language",
+      values \ "creation_date",
+      values \ "modification_date",
+      values \ "creators" \ "value",
+      values \ "contributors" \ "value",
+      values \ "allowDiscussion",
+      values \ "tableContents",
+      values \ "presentation",
+      values \ "text"
     )
   }
 
