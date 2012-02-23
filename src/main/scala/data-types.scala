@@ -39,84 +39,52 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 
-package scalax.pecs
+package scalax
+package pecs
 
-import dispatch._
-
-/** Pecs resource abstract in the data type to share information.
-  *
-  * @tparam A  data type of the resource
-  * @tparam PR type of the resource
-  */
-abstract class PecsResource[A,PR <: PecsResource[A,PR]] {
-
-  self: PR =>
-
-  /** Returns the name of the resource. */
-  def name: String
-
-  /** Returns the URL of the resource. */
-  def website: String
-
-  /** Returns the host of the resource. */
-  def host: String = url(website).host.toURI
-
-  /** Returns the path of the resource. */
-  def path: String = url(website).path
-
-  /** Returns the children of this resource as name path pairs. */
-  def children: List[PR]
-
-  /** Returns the provided views. */
-  def views: List[String]
-
-  /** Optionally returns a resource from given path. */
-  def fromPath(path: String): Option[PR] =
-    children find { _.path == path }
-
-  /** Optionally returns a resource from given uuid. */
-  def fromUuid(uuid: String): Option[PR] =
-    children find { _.name == uuid }
-
-  /** Returns the type of this resource. */
-  def resourceType: Option[String]
-
-  /** Returns the actual data of this resource. */
-  def data: Option[Data]
-
-  // -----------------------------------------------------------------------
-  // console
-  // -----------------------------------------------------------------------
-
-  /** Mimics coreutils ls. */
-  def ls = children map {
-    _.path.replaceFirst(path,"").replaceFirst("/","")
-  } foreach println
-
-  /** Mimics bash cd. */
-  def cd(path: String): PR = try {
-    path.split("/").foldLeft(self) { (pr,path) =>
-      pr.fromPath(pr.path + "/" + path).get
-    }
-  } catch { case e =>
-    Console.err.printf("Cannot change dir to %s (%s).\n", path, e)
-    self
-  }
-
-  // -----------------------------------------------------------------------
-  // internals
-  // -----------------------------------------------------------------------
-
-  /** Returns the request for information about the resource. */
-  protected def infoRequest: Request
-
-  /** Returns the request for fetching the resource. */
-  protected def resourceRequest: Request
-
-  /** Returns resource information. */
-  def info: A
-
-  /** Returns the actual resource. */
-  def resource: A
-
+object Data {
+  val folder   = "Folder"
+  val document = "Document"
 }
+
+sealed trait Data {
+  def title: String
+  def id: String
+  def description: String
+  def subject: List[String]
+  def language: String
+  def creationDate: DateTime
+  def modificationDate: DateTime
+  def creators: List[String]
+  def contributors: List[String]
+  def allowDiscussion: Boolean
+}
+
+case class Folder (
+    title: String,
+    id: String,
+    description: String,
+    subject: List[String],
+    language: String,
+    creationDate: DateTime,
+    modificationDate: DateTime,
+    creators: List[String],
+    contributors: List[String],
+    allowDiscussion: Boolean
+  ) extends Data
+
+case class Document (
+    title: String,
+    id: String,
+    description: String,
+    subject: List[String],
+    language: String,
+    creationDate: DateTime,
+    modificationDate: DateTime,
+    creators: List[String],
+    contributors: List[String],
+    allowDiscussion: Boolean,
+    hasTOC: Boolean,
+    hasPresentation: Boolean,
+    text: String
+  ) extends Data
