@@ -24,7 +24,8 @@ object PecsBuild extends Build {
         dispatchCore,
         dispatchHttp,
         dispatchJson,
-        dispatchHttpJson
+        dispatchHttpJson,
+        time
       ),
       initialCommands in Compile in console := """import scalax.pecs._"""
     )
@@ -38,4 +39,6 @@ object Dependencies {
   lazy val dispatchHttp     = "net.databinder" %% "dispatch-http"      % dispatchVersion
   lazy val dispatchJson     = "net.databinder" %% "dispatch-json"      % dispatchVersion
   lazy val dispatchHttpJson = "net.databinder" %% "dispatch-http-json" % dispatchVersion
+
+  lazy val time = "org.scala-tools.time" %% "time" % "0.5"
 }

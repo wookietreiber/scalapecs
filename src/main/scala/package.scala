@@ -46,4 +46,16 @@ package scalax
   * XML.
   */
 package object pecs {
+
+  // -----------------------------------------------------------------------
+  // aliases
+  // -----------------------------------------------------------------------
+
+  type DateTime = org.joda.time.DateTime
+
+  type DateTimeFormatter = org.joda.time.format.DateTimeFormatter
+
+  def forPattern(pattern: String): DateTimeFormatter =
+    org.joda.time.format.DateTimeFormat.forPattern(pattern)
+
 }
