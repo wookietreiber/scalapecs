@@ -84,6 +84,14 @@ case class XmlPecsResource(website: String, name: String = "")
 
   override protected def dataValues = resource \ "values"
 
+  private def convertDateString(s: String) =
+    s.replaceAll("%3A",":").replaceAll("%2B","+")
+
+  private def booleanOrFalse(s: String) = s match {
+    case "" => false
+    case s  => s.toBoolean
+  }
+
   override def data = resourceType collect {
     case Data.folder => Folder (
       dataValues \ "title" text,
@@ -91,14 +99,11 @@ case class XmlPecsResource(website: String, name: String = "")
       dataValues \ "description" text,
       dataValues \ "subject" \ "value" map { _.text } toList,
       dataValues \ "language" text,
-      pecsDate((dataValues \ "creation_date" text).replaceAll("%3A",":").replaceAll("%2B","+")),
-      pecsDate((dataValues \ "modification_date" text).replaceAll("%3A",":").replaceAll("%2B","+")),
+      pecsDate(convertDateString(dataValues \ "creation_date" text)),
+      pecsDate(convertDateString(dataValues \ "modification_date" text)),
       dataValues \ "creators" \ "value" map { _.text } toList,
       dataValues \ "contributors" \ "value" map { _.text } toList,
-      (dataValues \ "allowDiscussion" text) match {
-        case "" => false
-        case s  => s.toBoolean
-      }
+      booleanOrFalse(dataValues \ "allowDiscussion" text)
     )
 
     case Data.document => Document (
@@ -107,22 +112,13 @@ case class XmlPecsResource(website: String, name: String = "")
       dataValues \ "description" text,
       dataValues \ "subject" \ "value" map { _.text } toList,
       dataValues \ "language" text,
-      pecsDate((dataValues \ "creation_date" text).replaceAll("%3A",":").replaceAll("%2B","+")),
-      pecsDate((dataValues \ "modification_date" text).replaceAll("%3A",":").replaceAll("%2B","+")),
+      pecsDate(convertDateString(dataValues \ "creation_date" text)),
+      pecsDate(convertDateString(dataValues \ "modification_date" text)),
       dataValues \ "creators" \ "value" map { _.text } toList,
       dataValues \ "contributors" \ "value" map { _.text } toList,
-      (dataValues \ "allowDiscussion" text) match {
-        case "" => false
-        case s  => s.toBoolean
-      },
-      (dataValues \ "tableContents" text) match {
-        case "" => false
-        case s  => s.toBoolean
-      },
-      (dataValues \ "presentation" text) match {
-        case "" => false
-        case s  => s.toBoolean
-      },
+      booleanOrFalse(dataValues \ "allowDiscussion" text),
+      booleanOrFalse(dataValues \ "tableContents" text),
+      booleanOrFalse(dataValues \ "presentation" text),
       dataValues \ "text" text
     )
   }
