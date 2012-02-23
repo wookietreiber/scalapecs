@@ -58,4 +58,11 @@ package object pecs {
   def forPattern(pattern: String): DateTimeFormatter =
     org.joda.time.format.DateTimeFormat.forPattern(pattern)
 
+  // -----------------------------------------------------------------------
+  // convenience
+  // -----------------------------------------------------------------------
+
+  def pecsDate(s: String) =
+    forPattern("YYYY-MM-DD'T'HH:mm:ssZ").parseDateTime(s)
+
 }

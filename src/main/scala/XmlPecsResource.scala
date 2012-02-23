@@ -91,11 +91,8 @@ case class XmlPecsResource(website: String, name: String = "")
       dataValues \ "description" text,
       dataValues \ "subject" \ "value" map { _.text } toList,
       dataValues \ "language" text,
-      forPattern("YYYY-MM-DD'T'HH:mm:ssZ").parseDateTime {
-        (dataValues \ "creation_date" text).replaceAll("%3A",":").replaceAll("%2B","+")
-      },
-      forPattern("YYYY-MM-DD'T'HH:mm:ssZ").parseDateTime((dataValues \
-      "modification_date" text).replaceAll("%3A",":").replaceAll("%2B","+")),
+      pecsDate((dataValues \ "creation_date" text).replaceAll("%3A",":").replaceAll("%2B","+")),
+      pecsDate((dataValues \ "modification_date" text).replaceAll("%3A",":").replaceAll("%2B","+")),
       dataValues \ "creators" \ "value" map { _.text } toList,
       dataValues \ "contributors" \ "value" map { _.text } toList,
       (dataValues \ "allowDiscussion" text) match {
@@ -110,10 +107,8 @@ case class XmlPecsResource(website: String, name: String = "")
       dataValues \ "description" text,
       dataValues \ "subject" \ "value" map { _.text } toList,
       dataValues \ "language" text,
-      forPattern("YYYY-MM-DD'T'HH:mm:ssZ").parseDateTime((dataValues \
-      "creation_date" text).replaceAll("%3A",":").replaceAll("%2B","+")),
-      forPattern("YYYY-MM-DD'T'HH:mm:ssZ").parseDateTime((dataValues \
-      "modification_date" text).replaceAll("%3A",":").replaceAll("%2B","+")),
+      pecsDate((dataValues \ "creation_date" text).replaceAll("%3A",":").replaceAll("%2B","+")),
+      pecsDate((dataValues \ "modification_date" text).replaceAll("%3A",":").replaceAll("%2B","+")),
       dataValues \ "creators" \ "value" map { _.text } toList,
       dataValues \ "contributors" \ "value" map { _.text } toList,
       (dataValues \ "allowDiscussion" text) match {
