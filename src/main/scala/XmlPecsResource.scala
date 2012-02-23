@@ -93,33 +93,33 @@ case class XmlPecsResource(website: String, name: String = "")
   }
 
   override def data = resourceType collect {
-    case Data.folder => Folder (
-      dataValues \ "title" text,
-      dataValues \ "id" text,
-      dataValues \ "description" text,
-      dataValues \ "subject" \ "value" map { _.text } toList,
-      dataValues \ "language" text,
-      pecsDate(convertDateString(dataValues \ "creation_date" text)),
-      pecsDate(convertDateString(dataValues \ "modification_date" text)),
-      dataValues \ "creators" \ "value" map { _.text } toList,
-      dataValues \ "contributors" \ "value" map { _.text } toList,
-      booleanOrFalse(dataValues \ "allowDiscussion" text)
+    case Data.folder => val values = dataValues ; Folder (
+      values \ "title" text,
+      values \ "id" text,
+      values \ "description" text,
+      values \ "subject" \ "value" map { _.text } toList,
+      values \ "language" text,
+      pecsDate(convertDateString(values \ "creation_date" text)),
+      pecsDate(convertDateString(values \ "modification_date" text)),
+      values \ "creators" \ "value" map { _.text } toList,
+      values \ "contributors" \ "value" map { _.text } toList,
+      booleanOrFalse(values \ "allowDiscussion" text)
     )
 
-    case Data.document => Document (
-      dataValues \ "title" text,
-      dataValues \ "id" text,
-      dataValues \ "description" text,
-      dataValues \ "subject" \ "value" map { _.text } toList,
-      dataValues \ "language" text,
-      pecsDate(convertDateString(dataValues \ "creation_date" text)),
-      pecsDate(convertDateString(dataValues \ "modification_date" text)),
-      dataValues \ "creators" \ "value" map { _.text } toList,
-      dataValues \ "contributors" \ "value" map { _.text } toList,
-      booleanOrFalse(dataValues \ "allowDiscussion" text),
-      booleanOrFalse(dataValues \ "tableContents" text),
-      booleanOrFalse(dataValues \ "presentation" text),
-      dataValues \ "text" text
+    case Data.document => val values = dataValues ; Document (
+      values \ "title" text,
+      values \ "id" text,
+      values \ "description" text,
+      values \ "subject" \ "value" map { _.text } toList,
+      values \ "language" text,
+      pecsDate(convertDateString(values \ "creation_date" text)),
+      pecsDate(convertDateString(values \ "modification_date" text)),
+      values \ "creators" \ "value" map { _.text } toList,
+      values \ "contributors" \ "value" map { _.text } toList,
+      booleanOrFalse(values \ "allowDiscussion" text),
+      booleanOrFalse(values \ "tableContents" text),
+      booleanOrFalse(values \ "presentation" text),
+      values \ "text" text
     )
   }
 
